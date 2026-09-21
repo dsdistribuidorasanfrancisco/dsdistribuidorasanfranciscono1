@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>DS Distribuidora San Francisco No.2</title>
+<title>DS Distribuidora San Francisco No.1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
@@ -16,20 +16,16 @@ import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged,
   GoogleAuthProvider, FacebookAuthProvider, signInWithPopup }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-const _DEFAULT_CONFIG = {
-  apiKey: "AIzaSyB87RrFfXhewafK_ivh3OBujUlAn81eBis",
-  authDomain: "dsdistribuidorasfc2-cc78f.firebaseapp.com",
-  databaseURL: "https://dsdistribuidorasfc2-cc78f-default-rtdb.firebaseio.com",
-  projectId: "dsdistribuidorasfc2-cc78f",
-  storageBucket: "dsdistribuidorasfc2-cc78f.firebasestorage.app",
-  messagingSenderId: "57231678401",
-  appId: "1:57231678401:web:0e3daa78c075873e7f2d40"
-};
-// Si hay config guardada en localStorage pero es del proyecto antiguo, se descarta automáticamente
 const _savedFbCfg = JSON.parse(localStorage.getItem("lx_fb_config") || "null");
-const _isOldConfig = _savedFbCfg && _savedFbCfg.projectId && !_savedFbCfg.projectId.includes("dsdistribuidorasfc2-cc78f");
-if (_isOldConfig) localStorage.removeItem("lx_fb_config");
-const FIREBASE_CONFIG = (!_isOldConfig && _savedFbCfg) ? _savedFbCfg : _DEFAULT_CONFIG;
+const FIREBASE_CONFIG = _savedFbCfg || {
+  apiKey: "AIzaSyDjM0dNZBeJ5Yb5CKksjpa3RyaCtBV-Jy4",
+  authDomain: "dsdistribuidorasanfrancisco1.firebaseapp.com",
+  databaseURL: "https://dsdistribuidorasanfrancisco1-default-rtdb.firebaseio.com",
+  projectId: "dsdistribuidorasanfrancisco1",
+  storageBucket: "dsdistribuidorasanfrancisco1.firebasestorage.app",
+  messagingSenderId: "336554264106",
+  appId: "1:336554264106:web:91b08aa774b8909194e553"
+};
 const FB_CONFIGURED = true;
 
 // ── Inicializar ────────────────────────────────────────────────
@@ -538,6 +534,90 @@ h1, h2, h3, h4, .section-title, .nav-logo { font-family: "Plus Jakarta Sans", sa
   transform: translateX(-50%) translateY(0);
 }
 
+/* ── Página Detalle Producto ── */
+#page-product { display:none; min-height:100vh; background:var(--bg); animation:fadeIn 0.2s ease; }
+#page-product.active { display:block; }
+.pd-back-bar { display:flex; align-items:center; gap:0.7rem; padding:1rem 1.2rem; background:var(--surface); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:10; }
+.pd-back-btn { background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--dark); padding:0.2rem 0.4rem; border-radius:6px; line-height:1; }
+.pd-back-bar span { font-size:0.9rem; color:var(--text-muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.pd-main-img { width:100%; max-height:380px; object-fit:contain; background:#fff; display:block; }
+.pd-main-img-placeholder { width:100%; height:260px; display:flex; flex-direction:column; align-items:center; justify-content:center; background:var(--bg); font-size:4rem; color:var(--text-muted); gap:0.5rem; }
+.pd-content { padding:1.4rem 1.2rem 6rem; }
+.pd-badge2 { display:inline-block; padding:0.25rem 0.8rem; border-radius:100px; font-size:0.75rem; font-weight:700; margin-bottom:0.9rem; }
+.pd-title { font-family:"Plus Jakarta Sans",serif; font-size:1.5rem; font-weight:800; color:var(--dark); line-height:1.25; margin-bottom:0.5rem; }
+.pd-sku2 { font-size:0.82rem; color:var(--text-muted); font-weight:600; margin-bottom:1rem; }
+.pd-divider { border:none; border-top:1px solid var(--border); margin:1rem 0; }
+.pd-price2 { font-size:2.2rem; font-weight:800; color:var(--accent); margin-bottom:0.2rem; }
+.pd-price2-old { font-size:1rem; color:var(--text-muted); text-decoration:line-through; margin-bottom:0.5rem; }
+.pd-avail { font-size:0.9rem; font-weight:700; margin-bottom:1.5rem; }
+.pd-desc2 { font-size:0.95rem; color:var(--text-muted); line-height:1.7; margin-bottom:1.5rem; }
+/* Galería múltiples imágenes */
+.pd-gallery-thumbs { display:flex; gap:0.6rem; padding:0.8rem 1.2rem; overflow-x:auto; scrollbar-width:none; background:var(--bg); border-bottom:1px solid var(--border); }
+.pd-gallery-thumbs::-webkit-scrollbar { display:none; }
+.pd-gallery-thumb { width:60px; height:60px; border-radius:var(--radius-sm); object-fit:cover; cursor:pointer; border:2px solid transparent; flex-shrink:0; transition:border-color 0.2s; }
+.pd-gallery-thumb.active { border-color:var(--accent); box-shadow:0 0 0 2px rgba(8,33,204,0.2); }
+/* Multi-image admin rows */
+.img-row { display:flex; align-items:center; gap:0.6rem; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:0.6rem 0.8rem; }
+.img-row-thumb { width:44px; height:44px; border-radius:6px; object-fit:cover; background:var(--bg); flex-shrink:0; border:1px solid var(--border); }
+.img-row input[type=text] { flex:1; border:none; outline:none; font-size:0.88rem; font-family:inherit; background:transparent; color:var(--dark); min-width:0; }
+.img-row-del { background:none; border:none; color:var(--red); font-size:1.2rem; cursor:pointer; padding:0 0.3rem; flex-shrink:0; line-height:1; }
+.pd-fixed-bar { position:fixed; bottom:0; left:0; right:0; background:var(--surface); border-top:1px solid var(--border); padding:1rem 1.2rem; display:flex; gap:0.8rem; z-index:20; max-width:600px; margin:0 auto; }
+.pd-fixed-bar .pd-btn-add { flex:1; background:var(--accent); color:#fff; border:none; border-radius:var(--radius-sm); padding:1rem; font-size:1rem; font-weight:700; cursor:pointer; font-family:inherit; transition:0.2s; }
+.pd-fixed-bar .pd-btn-add:disabled { background:var(--border); color:var(--text-muted); cursor:not-allowed; }
+.pd-fixed-bar .pd-btn-share2 { background:var(--bg); border:1.5px solid var(--border); color:var(--dark); border-radius:var(--radius-sm); padding:1rem 1.1rem; font-size:1.1rem; cursor:pointer; font-family:inherit; transition:0.2s; white-space:nowrap; font-weight:700; }
+
+.product-card { position: relative; }
+.product-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+.share-product-btn {
+  width: 100%;
+  background: transparent;
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-family: "Inter", sans-serif;
+  transition: all 0.2s ease;
+  letter-spacing: 0.01em;
+}
+.share-product-btn:hover { background: var(--accent); color: #fff; }
+.share-product-btn:active { opacity: 0.7; }
+.share-product-btn:focus { outline: none; }
+/* Share toast popup */
+.share-popup {
+  position: fixed;
+  bottom: 5rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--dark);
+  color: #fff;
+  padding: 0.7rem 1.4rem;
+  border-radius: 100px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 9999;
+  white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+.share-popup.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 /* Pagination */
 .pagination-bar { display: flex; gap: 0.5rem; justify-content: center; margin-top: 2.5rem; flex-wrap: wrap; }
 .pg-btn { padding: 0.6rem 1rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: all 0.2s; color: var(--dark); box-shadow: var(--shadow-sm); }
@@ -676,38 +756,6 @@ h1, h2, h3, h4, .section-title, .nav-logo { font-family: "Plus Jakarta Sans", sa
 .quote-table tr.quote-total-row td { font-weight: 800; font-size: 1.2rem; border-top: 2px solid var(--dark); }
 .order-success { text-align: center; padding: 2rem 0; } .order-success .check { font-size: 5rem; margin-bottom: 1.5rem; animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 @keyframes scaleIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-
-/* ── Página Detalle Producto ── */
-#page-product { display:none; min-height:100vh; background:var(--bg); animation:fadeIn 0.2s ease; }
-#page-product.active { display:block; }
-.pd-back-bar { display:flex; align-items:center; gap:0.7rem; padding:1rem 1.2rem; background:var(--surface); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:10; }
-.pd-back-btn { background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--dark); padding:0.2rem 0.4rem; border-radius:6px; line-height:1; }
-.pd-back-bar span { font-size:0.9rem; color:var(--text-muted); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.pd-main-img { width:100%; max-height:380px; object-fit:contain; background:#fff; display:block; }
-.pd-main-img-placeholder { width:100%; height:260px; display:flex; flex-direction:column; align-items:center; justify-content:center; background:var(--bg); font-size:4rem; color:var(--text-muted); gap:0.5rem; }
-.pd-content { padding:1.4rem 1.2rem 6rem; }
-.pd-badge2 { display:inline-block; padding:0.25rem 0.8rem; border-radius:100px; font-size:0.75rem; font-weight:700; margin-bottom:0.9rem; }
-.pd-title { font-family:"Plus Jakarta Sans",serif; font-size:1.5rem; font-weight:800; color:var(--dark); line-height:1.25; margin-bottom:0.5rem; }
-.pd-sku2 { font-size:0.82rem; color:var(--text-muted); font-weight:600; margin-bottom:1rem; }
-.pd-divider { border:none; border-top:1px solid var(--border); margin:1rem 0; }
-.pd-price2 { font-size:2.2rem; font-weight:800; color:var(--accent); margin-bottom:0.2rem; }
-.pd-price2-old { font-size:1rem; color:var(--text-muted); text-decoration:line-through; margin-bottom:0.5rem; }
-.pd-avail { font-size:0.9rem; font-weight:700; margin-bottom:1.5rem; }
-.pd-desc2 { font-size:0.95rem; color:var(--text-muted); line-height:1.7; margin-bottom:1.5rem; }
-/* Galería múltiples imágenes */
-.pd-gallery-thumbs { display:flex; gap:0.6rem; padding:0.8rem 1.2rem; overflow-x:auto; scrollbar-width:none; background:var(--bg); border-bottom:1px solid var(--border); }
-.pd-gallery-thumbs::-webkit-scrollbar { display:none; }
-.pd-gallery-thumb { width:60px; height:60px; border-radius:var(--radius-sm); object-fit:cover; cursor:pointer; border:2px solid transparent; flex-shrink:0; transition:border-color 0.2s; }
-.pd-gallery-thumb.active { border-color:var(--accent); box-shadow:0 0 0 2px rgba(8,33,204,0.2); }
-/* Multi-image admin rows */
-.img-row { display:flex; align-items:center; gap:0.6rem; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:0.6rem 0.8rem; }
-.img-row-thumb { width:44px; height:44px; border-radius:6px; object-fit:cover; background:var(--bg); flex-shrink:0; border:1px solid var(--border); }
-.img-row input[type=text] { flex:1; border:none; outline:none; font-size:0.88rem; font-family:inherit; background:transparent; color:var(--dark); min-width:0; }
-.img-row-del { background:none; border:none; color:var(--red); font-size:1.2rem; cursor:pointer; padding:0 0.3rem; flex-shrink:0; line-height:1; }
-.pd-fixed-bar { position:fixed; bottom:0; left:0; right:0; background:var(--surface); border-top:1px solid var(--border); padding:1rem 1.2rem; display:flex; gap:0.8rem; z-index:20; max-width:600px; margin:0 auto; }
-.pd-fixed-bar .pd-btn-add { flex:1; background:var(--accent); color:#fff; border:none; border-radius:var(--radius-sm); padding:1rem; font-size:1rem; font-weight:700; cursor:pointer; font-family:inherit; transition:0.2s; }
-.pd-fixed-bar .pd-btn-add:disabled { background:var(--border); color:var(--text-muted); cursor:not-allowed; }
-.pd-fixed-bar .pd-btn-share2 { background:var(--bg); border:1.5px solid var(--border); color:var(--dark); border-radius:var(--radius-sm); padding:1rem 1.1rem; font-size:1.1rem; cursor:pointer; font-family:inherit; transition:0.2s; white-space:nowrap; font-weight:700; }
 
 /* Loaders & Toasts */
 .loading-overlay { position: fixed; inset: 0; background: var(--dark); z-index: 500; display: none; flex-direction: column; align-items: center; justify-content: center; color: #fff; gap: 1rem; }
@@ -862,20 +910,21 @@ h1, h2, h3, h4, .section-title, .nav-logo { font-family: "Plus Jakarta Sans", sa
   <link rel="apple-touch-icon" href="https://TU-URL-DEL-LOGO.png">
   <!-- Open Graph: imagen que aparece al compartir en WhatsApp -->
   <!-- OG_META_START -->
-  <meta property="og:title" content="DS Distribuidora San Francisco No.2">
-  <meta property="og:description" content="Distribuidora de productos al por mayor">
+  <meta property="og:title" content="DS Distribuidora San Francisco No.1">
+  <meta property="og:description" content="Los mejores productos al mejor precio">
   <meta property="og:image" content="https://res.cloudinary.com/dxxlersgi/image/upload/v1780665475/logodsdistribuidirasanfrancisco_cr6amy.png">
   <meta property="og:image:width" content="300">
   <meta property="og:image:height" content="300">
-  <meta property="og:url" content="https://dsdistribuidorasanfrancisco2.vercel.app/">
+  <meta property="og:url" content="https://distribuidorasanfranciscono1.vercel.app/">
   <meta property="og:type" content="website">
   <!-- OG_META_END -->
 </head>
 <body>
 
+
 <nav class="navbar">
   <div class="nav-logo">
-    <span id="storeNameEl">DS DISTRIBUIDORA SAN FRANCISCO NO.2</span>
+    <span id="storeNameEl">DS Distribuidora San Francisco No.1</span>
   </div>
   <div class="nav-links">
     <button class="nav-btn active" onclick="showPage('shop')" title="Tienda" aria-label="Tienda">
@@ -911,7 +960,7 @@ h1, h2, h3, h4, .section-title, .nav-logo { font-family: "Plus Jakarta Sans", sa
     <div class="hero-logo-wrap">
       <img id="heroLogo" src="" alt="Logo">
     </div>
-    <h1 id="heroTitle">Bienvenido a<br><span>DS DISTRIBUIDORA SAN FRANCISCO NO.2</span></h1>
+    <h1 id="heroTitle">Bienvenido a<br><span>DS Distribuidora San Francisco No.1</span></h1>
     <p id="heroSubtitle">Los mejores productos al mejor precio</p>
   </div>
   <h2 class="section-title">Catálogo de Productos</h2>
@@ -1278,8 +1327,6 @@ h1, h2, h3, h4, .section-title, .nav-logo { font-family: "Plus Jakarta Sans", sa
       <h4>🌐 Redes Sociales</h4>
       <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:1.2rem">Activa cada red social, pega el enlace y opcionalmente una imagen personalizada para el icono. Si no pones imagen, se usará el icono oficial.</p>
       <div style="display:flex;flex-direction:column;gap:1.2rem" id="socialLinksAdmin">
-
-        <!-- WhatsApp -->
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.2rem">
           <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:0.8rem">
             <input type="checkbox" id="slWaEnabled" style="width:18px;height:18px;accent-color:#25D366;cursor:pointer">
@@ -1288,8 +1335,6 @@ h1, h2, h3, h4, .section-title, .nav-logo { font-family: "Plus Jakarta Sans", sa
           <div class="form-group"><label>Número (con código de país, ej: 50299887766)</label><input type="text" id="slWaUrl" placeholder="50299887766"></div>
           <div class="form-group" style="margin:0"><label>Icono personalizado (URL de imagen) <span style="font-size:0.78rem;color:var(--text-muted)">— opcional</span></label><input type="text" id="slWaIcon" placeholder="https://..."><img id="slWaIconPreview" src="" style="display:none;width:40px;height:40px;border-radius:50%;margin-top:0.5rem;object-fit:cover" onerror="this.style.display='none'"></div>
         </div>
-
-        <!-- Facebook -->
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.2rem">
           <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:0.8rem">
             <input type="checkbox" id="slFbEnabled" style="width:18px;height:18px;accent-color:#1877F2;cursor:pointer">
@@ -1298,8 +1343,6 @@ h1, h2, h3, h4, .section-title, .nav-logo { font-family: "Plus Jakarta Sans", sa
           <div class="form-group"><label>URL de tu página de Facebook</label><input type="text" id="slFbUrl" placeholder="https://facebook.com/tupagina"></div>
           <div class="form-group" style="margin:0"><label>Icono personalizado (URL de imagen) <span style="font-size:0.78rem;color:var(--text-muted)">— opcional</span></label><input type="text" id="slFbIcon" placeholder="https://..."><img id="slFbIconPreview" src="" style="display:none;width:40px;height:40px;border-radius:50%;margin-top:0.5rem;object-fit:cover" onerror="this.style.display='none'"></div>
         </div>
-
-        <!-- Instagram -->
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.2rem">
           <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:0.8rem">
             <input type="checkbox" id="slIgEnabled" style="width:18px;height:18px;accent-color:#E1306C;cursor:pointer">
@@ -1308,8 +1351,6 @@ h1, h2, h3, h4, .section-title, .nav-logo { font-family: "Plus Jakarta Sans", sa
           <div class="form-group"><label>URL de tu perfil de Instagram</label><input type="text" id="slIgUrl" placeholder="https://instagram.com/tuusuario"></div>
           <div class="form-group" style="margin:0"><label>Icono personalizado (URL de imagen) <span style="font-size:0.78rem;color:var(--text-muted)">— opcional</span></label><input type="text" id="slIgIcon" placeholder="https://..."><img id="slIgIconPreview" src="" style="display:none;width:40px;height:40px;border-radius:50%;margin-top:0.5rem;object-fit:cover" onerror="this.style.display='none'"></div>
         </div>
-
-        <!-- TikTok -->
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.2rem">
           <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:0.8rem">
             <input type="checkbox" id="slTtEnabled" style="width:18px;height:18px;accent-color:#010101;cursor:pointer">
@@ -1318,8 +1359,6 @@ h1, h2, h3, h4, .section-title, .nav-logo { font-family: "Plus Jakarta Sans", sa
           <div class="form-group"><label>URL de tu perfil de TikTok</label><input type="text" id="slTtUrl" placeholder="https://tiktok.com/@tuusuario"></div>
           <div class="form-group" style="margin:0"><label>Icono personalizado (URL de imagen) <span style="font-size:0.78rem;color:var(--text-muted)">— opcional</span></label><input type="text" id="slTtIcon" placeholder="https://..."><img id="slTtIconPreview" src="" style="display:none;width:40px;height:40px;border-radius:50%;margin-top:0.5rem;object-fit:cover" onerror="this.style.display='none'"></div>
         </div>
-
-        <!-- YouTube -->
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.2rem">
           <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:0.8rem">
             <input type="checkbox" id="slYtEnabled" style="width:18px;height:18px;accent-color:#FF0000;cursor:pointer">
@@ -1328,8 +1367,6 @@ h1, h2, h3, h4, .section-title, .nav-logo { font-family: "Plus Jakarta Sans", sa
           <div class="form-group"><label>URL de tu canal de YouTube</label><input type="text" id="slYtUrl" placeholder="https://youtube.com/@tucanal"></div>
           <div class="form-group" style="margin:0"><label>Icono personalizado (URL de imagen) <span style="font-size:0.78rem;color:var(--text-muted)">— opcional</span></label><input type="text" id="slYtIcon" placeholder="https://..."><img id="slYtIconPreview" src="" style="display:none;width:40px;height:40px;border-radius:50%;margin-top:0.5rem;object-fit:cover" onerror="this.style.display='none'"></div>
         </div>
-
-        <!-- Twitter/X -->
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.2rem">
           <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:0.8rem">
             <input type="checkbox" id="slTwEnabled" style="width:18px;height:18px;accent-color:#000;cursor:pointer">
@@ -1338,8 +1375,6 @@ h1, h2, h3, h4, .section-title, .nav-logo { font-family: "Plus Jakarta Sans", sa
           <div class="form-group"><label>URL de tu perfil de Twitter/X</label><input type="text" id="slTwUrl" placeholder="https://x.com/tuusuario"></div>
           <div class="form-group" style="margin:0"><label>Icono personalizado (URL de imagen) <span style="font-size:0.78rem;color:var(--text-muted)">— opcional</span></label><input type="text" id="slTwIcon" placeholder="https://..."><img id="slTwIconPreview" src="" style="display:none;width:40px;height:40px;border-radius:50%;margin-top:0.5rem;object-fit:cover" onerror="this.style.display='none'"></div>
         </div>
-
-        <!-- Telegram -->
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.2rem">
           <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:0.8rem">
             <input type="checkbox" id="slTgEnabled" style="width:18px;height:18px;accent-color:#2AABEE;cursor:pointer">
@@ -1348,7 +1383,6 @@ h1, h2, h3, h4, .section-title, .nav-logo { font-family: "Plus Jakarta Sans", sa
           <div class="form-group"><label>URL o usuario de Telegram</label><input type="text" id="slTgUrl" placeholder="https://t.me/tuusuario"></div>
           <div class="form-group" style="margin:0"><label>Icono personalizado (URL de imagen) <span style="font-size:0.78rem;color:var(--text-muted)">— opcional</span></label><input type="text" id="slTgIcon" placeholder="https://..."><img id="slTgIconPreview" src="" style="display:none;width:40px;height:40px;border-radius:50%;margin-top:0.5rem;object-fit:cover" onerror="this.style.display='none'"></div>
         </div>
-
       </div>
       <button class="btn btn-save" style="margin-top:1.5rem" onclick="saveSocialLinks()">💾 Guardar Redes Sociales</button>
     </div>
@@ -1545,7 +1579,7 @@ h1, h2, h3, h4, .section-title, .nav-logo { font-family: "Plus Jakarta Sans", sa
   <div class="modal quote-modal">
     <div class="quote-header">
       <div style="font-size:3rem; margin-bottom: 0.5rem">📋</div>
-      <h3 id="quoteStoreName" style="margin:0 0 0.5rem; font-size:1.8rem;">DS DISTRIBUIDORA SAN FRANCISCO NO.2</h3>
+      <h3 id="quoteStoreName" style="margin:0 0 0.5rem; font-size:1.8rem;">DS Distribuidora San Francisco No.1</h3>
       <div style="font-size:0.95rem;color:var(--text-muted);font-weight:500;" id="quoteDate"></div>
     </div>
     <div style="margin-bottom:1.5rem">
@@ -1592,13 +1626,14 @@ let GT_ALDEAS = {};
 let products=[], orders=[], cart=[];
 let editingId=null, loggedIn=false, currentPage=1;
 const PAGE_SIZE=24;
-let storeSettings={name:"DS DISTRIBUIDORA SAN FRANCISCO NO.2",desc:"Los mejores productos al mejor precio",logo:"",waNumber:"",credentials:"Dssanfrancisco:sfu2026",mayoreoConfig:null,shippingZones:{},defaultShipping:25,freeShippingAt:300,
+let storeSettings={name:"DS Distribuidora San Francisco No.1",desc:"Los mejores productos al mejor precio",logo:"",waNumber:"",credentials:"Dssanfrancisco:sfu2026",mayoreoConfig:null,shippingZones:{},defaultShipping:25,freeShippingAt:300,
   paymentMethods:{
     cod:{enabled:true,label:"Pago Contra Entrega",icon:"🚚",desc:""},
     transfer:{enabled:false,label:"Transferencia Bancaria",icon:"🏦",desc:""},
     deposit:{enabled:false,label:"Depósito Bancario",icon:"💵",desc:""},
     pickup:{enabled:false,label:"Recoge en Tienda",icon:"🏪",desc:""}
   },
+  pickupStores:[],
   theme:{
     bg:"#f8fafc",
     surface:"#ffffff",
@@ -1609,7 +1644,15 @@ let storeSettings={name:"DS DISTRIBUIDORA SAN FRANCISCO NO.2",desc:"Los mejores 
     neonEnabled:false,
     customPalettes:[]
   },
-  pickupStores:[]
+  socialLinks:{
+    whatsapp:{enabled:false,url:"",iconUrl:""},
+    facebook:{enabled:false,url:"",iconUrl:""},
+    instagram:{enabled:false,url:"",iconUrl:""},
+    tiktok:{enabled:false,url:"",iconUrl:""},
+    youtube:{enabled:false,url:"",iconUrl:""},
+    twitter:{enabled:false,url:"",iconUrl:""},
+    telegram:{enabled:false,url:"",iconUrl:""}
+  }
 };
 let mayoreoMode=false, mayoreoTipo="";
 // Tipos de precio: publico y mayoristas (con sub-tipos)
@@ -1683,9 +1726,15 @@ function localLoad(){
   // Compatibilidad — ahora init() maneja la carga
   cart=JSON.parse(localStorage.getItem("lx_cart")||"[]");
 }
+let _savingProducts=false;
 function saveProducts(){
   localStorage.setItem("lx_products",JSON.stringify(products));
-  if(window._fb && window._fb.ready()) window._fb.saveProducts(products);
+  if(window._fb && window._fb.ready()){
+    _savingProducts=true;
+    window._fb.saveProducts(products).then(()=>{
+      setTimeout(()=>{_savingProducts=false;},2000);
+    }).catch(()=>{_savingProducts=false;});
+  }
 }
 function saveOrders(){
   localStorage.setItem("lx_orders",JSON.stringify(orders));
@@ -1755,6 +1804,7 @@ function init(){
   // Escuchar cambios en tiempo real (para todos los visitantes)
   if(window._fb && window._fb.ready()){
     window._fb.watchProducts(arr=>{
+      if(_savingProducts) return; // evitar sobreescritura durante guardado
       products=arr;
       sortProductsAZ();
       localStorage.setItem("lx_products",JSON.stringify(products));
@@ -2989,7 +3039,7 @@ function updateFbStatusBadge(){
 }
 
 function saveStoreSettings(){
-  storeSettings.name=document.getElementById("settingName").value.trim()||"DS DISTRIBUIDORA SAN FRANCISCO NO.2";
+  storeSettings.name=document.getElementById("settingName").value.trim()||"DS Distribuidora San Francisco No.1";
   storeSettings.desc=document.getElementById("settingDesc").value.trim();
   storeSettings.waNumber=document.getElementById("settingWA").value.trim();
   storeSettings.credentials=document.getElementById("settingCreds").value.trim()||"distribuidora:genesis2024";
@@ -3053,7 +3103,7 @@ function renderShippingZones(){
 
 function openQuote(){
   if(!cart.length){toast("El carrito está vacío","error");return;}
-  document.getElementById("quoteStoreName").textContent=storeSettings.name||"DS DISTRIBUIDORA SAN FRANCISCO NO.2";
+  document.getElementById("quoteStoreName").textContent=storeSettings.name||"DS Distribuidora San Francisco No.1";
   document.getElementById("quoteDate").textContent=new Date().toLocaleDateString("es-GT",{year:"numeric",month:"long",day:"numeric"});
 
   const esMayoreo=mayoreoMode&&mayoreoTipo&&mayoreoTipo!=="publico";
@@ -3075,7 +3125,7 @@ function openQuote(){
 }
 function printQuote(){window.print();}
 function shareQuoteWhatsApp(){
-  const wa=storeSettings.waNumber, name=storeSettings.name||"DS DISTRIBUIDORA SAN FRANCISCO NO.2";
+  const wa=storeSettings.waNumber, name=storeSettings.name||"DS Distribuidora San Francisco No.1";
   const esMayoreo=mayoreoMode&&mayoreoTipo&&mayoreoTipo!=="publico";
   const labelActivo=esMayoreo?(MAYOREO_SUB_TIPOS[mayoreoTipo]?.label||mayoreoTipo):"Público";
   const client=document.getElementById("quoteClient").value;
@@ -3180,7 +3230,6 @@ function importInventoryCSV(e){
         var precio_mayor=idx.precio_mayor>=0?parseFloat(cols[idx.precio_mayor])||0:0;
         var unidades_mayor=idx.unidades_mayor>=0?parseInt(cols[idx.unidades_mayor])||0:0;
         var precio_mayoristas=precio_docena||precio_media_docena||precio_fardo||precio_mayor||0;
-        var eid=idx.id>=0?parseInt(cols[idx.id]):NaN;
         var ex=sku
           ? products.find(function(p){return p.sku&&p.sku.trim()===sku.trim();})||products.find(function(p){return p.name.toLowerCase().trim()===name.toLowerCase().trim();})
           : products.find(function(p){return p.name.toLowerCase().trim()===name.toLowerCase().trim();});
@@ -3841,6 +3890,7 @@ function deleteGeoLugar(dept,mun,lugar){
   finishGeoEdit();
   toast("Lugar eliminado ✓","success");
 }
+
 function handleAldeaCsv(input){
   const file=input.files[0]; if(!file)return;
   window._pendingDepts={};
@@ -4102,12 +4152,10 @@ function downloadAldeaTemplate(){
 <!-- Footer derechos reservados -->
 <footer id="siteFooter" style="width:100%;text-align:center;padding:1.5rem 1rem 2rem;font-family:'Inter',sans-serif;font-size:0.78rem;color:#000;border-top:1px solid var(--border,#e5e7eb);background:var(--surface,#fff);letter-spacing:0.3px;margin-top:2rem;">
   <div id="socialIconsFooter" style="display:flex;justify-content:center;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1rem"></div>
-  © 2026 DS DISTRIBUIDORA SAN FRANCISCO NO.2 &nbsp;–&nbsp; Todos Los Derechos Reservados
+  © 2026 DS DISTRIBUIDORA SAN FRANCISCO NO.1 &nbsp;–&nbsp; Todos Los Derechos Reservados
 </footer>
 
 <script>
-// ── REDES SOCIALES ──────────────────────────────────────────────
-
 const SOCIAL_DEFAULTS = {
   whatsapp: { label:"WhatsApp", color:"#25D366", svg:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>' },
   facebook:  { label:"Facebook",  color:"#1877F2", svg:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>' },
@@ -4117,93 +4165,58 @@ const SOCIAL_DEFAULTS = {
   twitter:   { label:"Twitter/X", color:"#000000", svg:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.213 5.567zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>' },
   telegram:  { label:"Telegram",  color:"#2AABEE", svg:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>' }
 };
-
 function renderSocialFooter(){
-  const container = document.getElementById("socialIconsFooter");
-  if(!container) return;
-  const sl = (storeSettings.socialLinks) || {};
-  const keys = Object.keys(SOCIAL_DEFAULTS);
-  let html = "";
-  keys.forEach(key => {
-    const item = sl[key] || {};
-    if(!item.enabled) return;
-    const def = SOCIAL_DEFAULTS[key];
-    let href = item.url || "";
-    if(key === "whatsapp" && href) href = "https://wa.me/" + href.replace(/\D/g,"");
-    if(!href) return;
-    const hasIcon = item.iconUrl && item.iconUrl.trim();
-    const iconContent = hasIcon
-      ? `<img src="${item.iconUrl}" alt="${def.label}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,0.18);display:block">`
-      : `<span style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:${def.color};color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.18)">${def.svg}</span>`;
-    html += `<a href="${href}" target="_blank" rel="noopener" title="${def.label}" style="display:inline-block;text-decoration:none;transition:transform 0.2s" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">${iconContent}</a>`;
+  const container=document.getElementById("socialIconsFooter");
+  if(!container)return;
+  const sl=(storeSettings.socialLinks)||{};
+  let html="";
+  Object.keys(SOCIAL_DEFAULTS).forEach(key=>{
+    const item=sl[key]||{};
+    if(!item.enabled)return;
+    const def=SOCIAL_DEFAULTS[key];
+    let href=item.url||"";
+    if(key==="whatsapp"&&href) href="https://wa.me/"+href.replace(/\D/g,"");
+    if(!href)return;
+    const hasIcon=item.iconUrl&&item.iconUrl.trim();
+    const iconContent=hasIcon
+      ?`<img src="${item.iconUrl}" alt="${def.label}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;box-shadow:0 2px 8px rgba(0,0,0,0.18);display:block">`
+      :`<span style="display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:${def.color};color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.18)">${def.svg}</span>`;
+    html+=`<a href="${href}" target="_blank" rel="noopener" title="${def.label}" style="display:inline-block;text-decoration:none;transition:transform 0.2s" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">${iconContent}</a>`;
   });
-  container.innerHTML = html;
-  container.style.display = html ? "flex" : "none";
+  container.innerHTML=html;
+  container.style.display=html?"flex":"none";
 }
-
 function loadSocialLinksAdmin(){
-  const sl = storeSettings.socialLinks || {};
-  const map = {
-    whatsapp:["slWaEnabled","slWaUrl","slWaIcon","slWaIconPreview"],
-    facebook:["slFbEnabled","slFbUrl","slFbIcon","slFbIconPreview"],
-    instagram:["slIgEnabled","slIgUrl","slIgIcon","slIgIconPreview"],
-    tiktok:["slTtEnabled","slTtUrl","slTtIcon","slTtIconPreview"],
-    youtube:["slYtEnabled","slYtUrl","slYtIcon","slYtIconPreview"],
-    twitter:["slTwEnabled","slTwUrl","slTwIcon","slTwIconPreview"],
-    telegram:["slTgEnabled","slTgUrl","slTgIcon","slTgIconPreview"]
-  };
+  const sl=storeSettings.socialLinks||{};
+  const map={whatsapp:["slWaEnabled","slWaUrl","slWaIcon","slWaIconPreview"],facebook:["slFbEnabled","slFbUrl","slFbIcon","slFbIconPreview"],instagram:["slIgEnabled","slIgUrl","slIgIcon","slIgIconPreview"],tiktok:["slTtEnabled","slTtUrl","slTtIcon","slTtIconPreview"],youtube:["slYtEnabled","slYtUrl","slYtIcon","slYtIconPreview"],twitter:["slTwEnabled","slTwUrl","slTwIcon","slTwIconPreview"],telegram:["slTgEnabled","slTgUrl","slTgIcon","slTgIconPreview"]};
   Object.entries(map).forEach(([key,[chk,urlId,iconId,prevId]])=>{
-    const item = sl[key]||{};
-    const c=document.getElementById(chk); if(c) c.checked=!!item.enabled;
-    const u=document.getElementById(urlId); if(u) u.value=item.url||"";
-    const ic=document.getElementById(iconId); if(ic){ ic.value=item.iconUrl||""; ic.oninput=function(){ const p=document.getElementById(prevId); if(p){p.src=this.value;p.style.display=this.value?"block":"none";} }; }
-    const p=document.getElementById(prevId); if(p){ if(item.iconUrl){p.src=item.iconUrl;p.style.display="block";}else p.style.display="none"; }
+    const item=sl[key]||{};
+    const c=document.getElementById(chk);if(c)c.checked=!!item.enabled;
+    const u=document.getElementById(urlId);if(u)u.value=item.url||"";
+    const ic=document.getElementById(iconId);if(ic){ic.value=item.iconUrl||"";ic.oninput=function(){const p=document.getElementById(prevId);if(p){p.src=this.value;p.style.display=this.value?"block":"none";}};}
+    const p=document.getElementById(prevId);if(p){if(item.iconUrl){p.src=item.iconUrl;p.style.display="block";}else p.style.display="none";}
   });
 }
-
 function saveSocialLinks(){
-  if(!storeSettings.socialLinks) storeSettings.socialLinks={};
-  const sl = storeSettings.socialLinks;
-  const map = {
-    whatsapp:["slWaEnabled","slWaUrl","slWaIcon"],
-    facebook:["slFbEnabled","slFbUrl","slFbIcon"],
-    instagram:["slIgEnabled","slIgUrl","slIgIcon"],
-    tiktok:["slTtEnabled","slTtUrl","slTtIcon"],
-    youtube:["slYtEnabled","slYtUrl","slYtIcon"],
-    twitter:["slTwEnabled","slTwUrl","slTwIcon"],
-    telegram:["slTgEnabled","slTgUrl","slTgIcon"]
-  };
+  if(!storeSettings.socialLinks)storeSettings.socialLinks={};
+  const sl=storeSettings.socialLinks;
+  const map={whatsapp:["slWaEnabled","slWaUrl","slWaIcon"],facebook:["slFbEnabled","slFbUrl","slFbIcon"],instagram:["slIgEnabled","slIgUrl","slIgIcon"],tiktok:["slTtEnabled","slTtUrl","slTtIcon"],youtube:["slYtEnabled","slYtUrl","slYtIcon"],twitter:["slTwEnabled","slTwUrl","slTwIcon"],telegram:["slTgEnabled","slTgUrl","slTgIcon"]};
   Object.entries(map).forEach(([key,[chk,urlId,iconId]])=>{
-    const enabled = document.getElementById(chk)?.checked||false;
-    const url = document.getElementById(urlId)?.value.trim()||"";
-    const iconUrl = document.getElementById(iconId)?.value.trim()||"";
+    const enabled=document.getElementById(chk)?.checked||false;
+    const url=document.getElementById(urlId)?.value.trim()||"";
+    const iconUrl=document.getElementById(iconId)?.value.trim()||"";
     sl[key]={enabled,url,iconUrl};
   });
   saveSettings();
   renderSocialFooter();
-  if(typeof toast==="function") toast("Redes sociales guardadas","success");
+  if(typeof toast==="function")toast("Redes sociales guardadas","success");
 }
-
-// Inicializar footer de redes al cargar
-document.addEventListener("DOMContentLoaded",()=>{
-  setTimeout(()=>{ renderSocialFooter(); },600);
-});
-
-// Extender applyStoreSettings para cargar las redes en el admin también
-const _origApply = window.applyStoreSettings || (()=>{});
-window.applyStoreSettings = function(){
-  if(typeof _origApply === "function") _origApply();
-  renderSocialFooter();
-};
-
-// Cargar datos en admin al abrir pestaña Tienda
-const _origSwitch = window.switchAdminTab;
-if(_origSwitch) window.switchAdminTab = function(tab, el){
-  _origSwitch(tab, el);
-  if(tab==="store") setTimeout(loadSocialLinksAdmin, 100);
-};
+document.addEventListener("DOMContentLoaded",()=>{setTimeout(()=>{renderSocialFooter();},600);});
+const _origApply=window.applyStoreSettings||(()=>{});
+window.applyStoreSettings=function(){if(typeof _origApply==="function")_origApply();renderSocialFooter();};
+const _origSwitch=window.switchAdminTab;
+if(_origSwitch)window.switchAdminTab=function(tab,el){_origSwitch(tab,el);if(tab==="store")setTimeout(loadSocialLinksAdmin,100);};
 </script>
-
 
 <script>
 // ══════════════════════════════════════════════════════════════
